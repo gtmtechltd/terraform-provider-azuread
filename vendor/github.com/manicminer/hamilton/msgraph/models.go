@@ -1400,6 +1400,17 @@ type SynchronizationJob struct {
 	SynchronizationJobSettings *[]SynchronizationJobKeyValue `json:"synchronizationJobSettings,omitempty"`
 	TemplateId                 *string                       `json:"templateId,omitempty"`
 }
+type TokenSigningCertificate struct {
+	CustomKeyIdentifier *string    `json:"customKeyIdentifier"`
+	DisplayName         *string    `json:"displayName"`
+	EndDateTime         *time.Time `json:"endDateTime"`
+	Key                 *string    `json:"key"`
+	KeyID               *string    `json:"keyId"`
+	StartDateTime       *time.Time `json:"startDateTime"`
+	Thumbprint          *string    `json:"thumbprint"`
+	Type                *string    `json:"type"`
+	Usage               *string    `json:"usage"`
+}
 
 type SignInActivity struct {
 	LastSignInDateTime  *time.Time `json:"lastSignInDateTime,omitempty"`
