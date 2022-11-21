@@ -1020,7 +1020,7 @@ func applicationResourceCreate(ctx context.Context, d *schema.ResourceData, meta
 	var ownersExtra msgraph.Owners
 
 	// Track whether we need to remove the calling principal later on
-	removeCallerOwner := true
+	// removeCallerOwner := true
 
 	// Retrieve and set the initial owners, which can be up to 20 in total when creating the application
 	if v, ok := d.GetOk("owners"); ok {
@@ -1030,7 +1030,7 @@ func applicationResourceCreate(ctx context.Context, d *schema.ResourceData, meta
 
 			// If the calling principal was found in the specified owners, we won't remove them later
 			if strings.EqualFold(ownerId, callerId) {
-				removeCallerOwner = false
+				// removeCallerOwner = false
 				continue
 			}
 
@@ -1087,11 +1087,11 @@ func applicationResourceCreate(ctx context.Context, d *schema.ResourceData, meta
 	}
 
 	// If the calling principal was not included in configuration, remove it now
-	if removeCallerOwner {
-		if _, err = client.RemoveOwners(ctx, d.Id(), &[]string{callerId}); err != nil {
-			return tf.ErrorDiagF(err, "Could not remove initial owner from application with object ID: %q", d.Id())
-		}
-	}
+	// if removeCallerOwner {
+	// 	if _, err = client.RemoveOwners(ctx, d.Id(), &[]string{callerId}); err != nil {
+	// 		return tf.ErrorDiagF(err, "Could not remove initial owner from application with object ID: %q", d.Id())
+	// 	}
+	// }
 
 	// Upload the application image
 	if imageContentType != "" && len(imageData) > 0 {
