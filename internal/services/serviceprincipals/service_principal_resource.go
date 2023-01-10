@@ -512,8 +512,8 @@ func servicePrincipalResourceCreate(ctx context.Context, d *schema.ResourceData,
 		Notes:                      utils.NullableString(d.Get("notes").(string)),
 		NotificationEmailAddresses: tf.ExpandStringSlicePtr(d.Get("notification_email_addresses").(*schema.Set).List()),
 		PreferredSingleSignOnMode:  utils.NullableString(d.Get("preferred_single_sign_on_mode").(string)),
-		SamlSingleSignOnSettings:   expandSamlSingleSignOn(d.Get("saml_single_sign_on").([]interface{})),
-		Tags:                       &tags,
+		// SamlSingleSignOnSettings:   expandSamlSingleSignOn(d.Get("saml_single_sign_on").([]interface{})),
+		Tags: &tags,
 	}
 
 	// Sort the owners into two slices, the first containing up to 20 and the rest overflowing to the second slice
@@ -667,7 +667,7 @@ func servicePrincipalResourceRead(ctx context.Context, d *schema.ResourceData, m
 	tf.Set(d, "preferred_single_sign_on_mode", servicePrincipal.PreferredSingleSignOnMode)
 	tf.Set(d, "redirect_uris", tf.FlattenStringSlicePtr(servicePrincipal.ReplyUrls))
 	tf.Set(d, "saml_metadata_url", servicePrincipal.SamlMetadataUrl)
-	tf.Set(d, "saml_single_sign_on", flattenSamlSingleSignOn(servicePrincipal.SamlSingleSignOnSettings))
+	// tf.Set(d, "saml_single_sign_on", flattenSamlSingleSignOn(servicePrincipal.SamlSingleSignOnSettings))
 	tf.Set(d, "service_principal_names", servicePrincipalNames)
 	tf.Set(d, "sign_in_audience", servicePrincipal.SignInAudience)
 	tf.Set(d, "tags", servicePrincipal.Tags)
@@ -715,7 +715,7 @@ func servicePrincipalResourceUpdate(ctx context.Context, d *schema.ResourceData,
 	properties.LoginUrl = utils.NullableString(d.Get("login_url").(string))
 	properties.Notes = utils.NullableString(d.Get("notes").(string))
 	properties.NotificationEmailAddresses = tf.ExpandStringSlicePtr(d.Get("notification_email_addresses").(*schema.Set).List())
-	properties.SamlSingleSignOnSettings = expandSamlSingleSignOn(d.Get("saml_single_sign_on").([]interface{}))
+	// properties.SamlSingleSignOnSettings = expandSamlSingleSignOn(d.Get("saml_single_sign_on").([]interface{}))
 	properties.Tags = &tags
 
 	// In the case of an AWS gallery application, it is necessary to manage this property on the application object instead of here

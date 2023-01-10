@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"time"
+
 	"github.com/manicminer/hamilton/odata"
 )
 
@@ -579,40 +580,40 @@ func (c *ServicePrincipalsClient) RemovePassword(ctx context.Context, servicePri
 }
 
 // AddTokenSigningCertificate appends a new self signed certificate (keys and password) to a Service Principal.
-func (c *ServicePrincipalsClient) AddTokenSigningCertificate(ctx context.Context, servicePrincipalId string, keyCredential KeyCredential) (*KeyCredential, int, error) {
-	var status int
+// func (c *ServicePrincipalsClient) AddTokenSigningCertificate(ctx context.Context, servicePrincipalId string, keyCredential KeyCredential) (*KeyCredential, int, error) {
+// 	var status int
 
-	body, err := json.Marshal(keyCredential)
-	if err != nil {
-		return nil, status, fmt.Errorf("json.Marshal(): %v", err)
-	}
+// 	body, err := json.Marshal(keyCredential)
+// 	if err != nil {
+// 		return nil, status, fmt.Errorf("json.Marshal(): %v", err)
+// 	}
 
-	resp, status, _, err := c.BaseClient.Post(ctx, PostHttpRequestInput{
-		Body:                   body,
-		ConsistencyFailureFunc: RetryOn404ConsistencyFailureFunc,
-		ValidStatusCodes:       []int{http.StatusOK, http.StatusCreated},
-		Uri: Uri{
-			Entity:      fmt.Sprintf("/servicePrincipals/%s/addTokenSigningCertificate", servicePrincipalId),
-			HasTenantId: true,
-		},
-	})
-	if err != nil {
-		return nil, status, fmt.Errorf("ServicePrincipalsClient.BaseClient.Post(): %v", err)
-	}
+// 	resp, status, _, err := c.BaseClient.Post(ctx, PostHttpRequestInput{
+// 		Body:                   body,
+// 		ConsistencyFailureFunc: RetryOn404ConsistencyFailureFunc,
+// 		ValidStatusCodes:       []int{http.StatusOK, http.StatusCreated},
+// 		Uri: Uri{
+// 			Entity:      fmt.Sprintf("/servicePrincipals/%s/addTokenSigningCertificate", servicePrincipalId),
+// 			HasTenantId: true,
+// 		},
+// 	})
+// 	if err != nil {
+// 		return nil, status, fmt.Errorf("ServicePrincipalsClient.BaseClient.Post(): %v", err)
+// 	}
 
-	defer resp.Body.Close()
-	respBody, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, status, fmt.Errorf("io.ReadAll(): %v", err)
-	}
+// 	defer resp.Body.Close()
+// 	respBody, err := io.ReadAll(resp.Body)
+// 	if err != nil {
+// 		return nil, status, fmt.Errorf("io.ReadAll(): %v", err)
+// 	}
 
-	var newKeyCredential KeyCredential
-	if err := json.Unmarshal(respBody, &newKeyCredential); err != nil {
-		return nil, status, fmt.Errorf("json.Unmarshal(): %v", err)
-	}
+// 	var newKeyCredential KeyCredential
+// 	if err := json.Unmarshal(respBody, &newKeyCredential); err != nil {
+// 		return nil, status, fmt.Errorf("json.Unmarshal(): %v", err)
+// 	}
 
-	return &newKeyCredential, status, nil
-}
+// 	return &newKeyCredential, status, nil
+// }
 
 // SetPreferredTokenSigningKeyThumbprint sets the field preferredTokenSigningKeyThumbprint for a Service Principal.
 func (c *ServicePrincipalsClient) SetPreferredTokenSigningKeyThumbprint(ctx context.Context, servicePrincipalId string, thumbprint string) (int, error) {
@@ -788,19 +789,17 @@ func (c *ServicePrincipalsClient) AddTokenSigningCertificate(ctx context.Context
 	expiry_time_unix := current_time_unix + 63072000 // 2 years in seconds
 	expiry_time_rfc3339 := time.Unix(expiry_time_unix, 0).Format(time.RFC3339)
 
-
 	data := struct {
 		displayName string `json:"displayName"`
-		endDateTime  string `json:"endDateTime"`
+		endDateTime string `json:"endDateTime"`
 	}{
 		displayName: "CN=AWSContoso",
-		endDateTime:  expiry_time_rfc3339,
+		endDateTime: expiry_time_rfc3339,
 	}
 	body, err := json.Marshal(data)
 	if err != nil {
 		return &tokenSigningCertificate, status, fmt.Errorf("json.Marshal(): %v", err)
 	}
-
 
 	resp, status, _, err := c.BaseClient.Post(ctx, PostHttpRequestInput{
 		Body:                   body,
@@ -826,7 +825,6 @@ func (c *ServicePrincipalsClient) AddTokenSigningCertificate(ctx context.Context
 	}
 	return &tokenSigningCertificate, status, nil
 }
-
 
 func (c *ServicePrincipalsClient) ActivateSigningToken(ctx context.Context, servicePrincipalId string, thumbprint string) (int, error) {
 	data := struct {
