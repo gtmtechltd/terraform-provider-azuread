@@ -534,7 +534,7 @@ func servicePrincipalResourceCreate(ctx context.Context, d *schema.ResourceData,
 	var ownersExtra msgraph.Owners
 
 	// Track whether we need to remove the calling principal later on
-	removeCallerOwner := true
+	// removeCallerOwner := true
 
 	// Retrieve and set the initial owners, which can be up to 20 in total when creating the service principal
 	if v, ok := d.GetOk("owners"); ok {
@@ -544,7 +544,7 @@ func servicePrincipalResourceCreate(ctx context.Context, d *schema.ResourceData,
 
 			// If the calling principal was found in the specified owners, we won't remove them later
 			if strings.EqualFold(ownerId, callerId) {
-				removeCallerOwner = false
+				// removeCallerOwner = false
 				continue
 			}
 
@@ -610,11 +610,11 @@ func servicePrincipalResourceCreate(ctx context.Context, d *schema.ResourceData,
 	}
 
 	// If the calling principal was not included in configuration, remove it now
-	if removeCallerOwner {
-		if _, err = client.RemoveOwners(ctx, d.Id(), &[]string{callerId}); err != nil {
-			return tf.ErrorDiagF(err, "Could not remove initial owner from service principal with object ID: %q", d.Id())
-		}
-	}
+	// if removeCallerOwner {
+	// 	if _, err = client.RemoveOwners(ctx, d.Id(), &[]string{callerId}); err != nil {
+	// 		return tf.ErrorDiagF(err, "Could not remove initial owner from service principal with object ID: %q", d.Id())
+	// 	}
+	// }
 
 	return servicePrincipalResourceRead(ctx, d, meta)
 }
@@ -751,7 +751,7 @@ func servicePrincipalResourceUpdate(ctx context.Context, d *schema.ResourceData,
 
 		desiredOwners := *tf.ExpandStringSlicePtr(v.(*schema.Set).List())
 		existingOwners := *owners
-		ownersForRemoval := utils.Difference(existingOwners, desiredOwners)
+		// ownersForRemoval := utils.Difference(existingOwners, desiredOwners)
 		ownersToAdd := utils.Difference(desiredOwners, existingOwners)
 
 		if len(ownersToAdd) > 0 {
@@ -770,11 +770,11 @@ func servicePrincipalResourceUpdate(ctx context.Context, d *schema.ResourceData,
 			}
 		}
 
-		if len(ownersForRemoval) > 0 {
-			if _, err = client.RemoveOwners(ctx, d.Id(), &ownersForRemoval); err != nil {
-				return tf.ErrorDiagF(err, "Could not remove owners from service principal with object ID: %q", d.Id())
-			}
-		}
+		// if len(ownersForRemoval) > 0 {
+		// 	if _, err = client.RemoveOwners(ctx, d.Id(), &ownersForRemoval); err != nil {
+		// 		return tf.ErrorDiagF(err, "Could not remove owners from service principal with object ID: %q", d.Id())
+		// 	}
+		// }
 	}
 
 	return servicePrincipalResourceRead(ctx, d, meta)
