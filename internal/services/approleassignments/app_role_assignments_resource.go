@@ -225,24 +225,33 @@ func appRoleAssignmentsResourceUpdate(ctx context.Context, d *schema.ResourceDat
 		}
 		principalObjectIds := d.Get("principal_object_ids").(*schema.Set).List()
 
-		for _, currentAppRoleAssignment := range *currentAppRoleAssignments {
+		// Limit currentAppRoleAssignments to just app roles related to
+		var filteredAppRoleAssignments []msgraph.AppRoleAssignment
+
+		for _, appRoleAssignment := range *currentAppRoleAssignments {
+			if *appRoleAssignment.AppRoleId == appRoleId {
+				filteredAppRoleAssignments = append(filteredAppRoleAssignments, appRoleAssignment)
+			}
+		}
+
+		for _, filteredAppRoleAssignment := range filteredAppRoleAssignments {
 			removeCurrentAppRoleAssignment := true
 			for _, tfPrincipalObjectId := range principalObjectIds {
-				if *currentAppRoleAssignment.PrincipalId == tfPrincipalObjectId {
+				if *filteredAppRoleAssignment.PrincipalId == tfPrincipalObjectId {
 					removeCurrentAppRoleAssignment = false
 				}
 			}
 			if removeCurrentAppRoleAssignment {
-				_, err := client.Remove(ctx, resourceObjectId, *currentAppRoleAssignment.Id)
+				_, err := client.Remove(ctx, resourceObjectId, *filteredAppRoleAssignment.Id)
 				if err != nil {
-					return tf.ErrorDiagPathF(err, "ids", "Could not remove app role assignment for Principal %q on AppRole %q on ServicePrincipal %q", *currentAppRoleAssignment.PrincipalId, appRoleId, resourceObjectId)
+					return tf.ErrorDiagPathF(err, "ids", "Could not remove app role assignment for Principal %q on AppRole %q on ServicePrincipal %q", *filteredAppRoleAssignment.PrincipalId, appRoleId, resourceObjectId)
 				}
 			}
 		}
 
 		for _, tfPrincipalObjectId := range principalObjectIds {
 			addNewAppRoleAssignment := true
-			for _, currentAppRoleAssignment := range *currentAppRoleAssignments {
+			for _, currentAppRoleAssignment := range filteredAppRoleAssignments {
 				if *currentAppRoleAssignment.PrincipalId == tfPrincipalObjectId {
 					addNewAppRoleAssignment = false
 				}
