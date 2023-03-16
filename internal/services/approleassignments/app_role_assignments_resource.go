@@ -204,8 +204,7 @@ func appRoleAssignmentsResourceRead(ctx context.Context, d *schema.ResourceData,
 
 func appRoleAssignmentsResourceUpdate(ctx context.Context, d *schema.ResourceData, meta interface{}) diag.Diagnostics {
 	client := meta.(*clients.Client).AppRoleAssignments.AppRoleAssignedToClient
-
-	if _, ok := d.GetOk("principal_object_ids"); ok && d.HasChange("principal_object_ids") {
+	if d.HasChange("principal_object_ids") {
 
 		appRoleId := d.Id()
 		resourceObjectId := d.Get("resource_object_id").(string)
